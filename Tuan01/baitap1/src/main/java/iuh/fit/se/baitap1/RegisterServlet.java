@@ -16,6 +16,12 @@ public class RegisterServlet extends HttpServlet {
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType("text/html");
+
+        // Hello
+        PrintWriter out = response.getWriter();
+        out.println("<html><body>");
+        out.println("<h1>" + "Đây là trang Register" + "</h1>");
+        out.println("</body></html>");
     }
 
     @Override
