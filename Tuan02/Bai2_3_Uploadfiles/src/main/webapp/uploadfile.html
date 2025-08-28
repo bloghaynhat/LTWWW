@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<form action="uploadfile" method="post" enctype="multipart/form-data" style="display: flex; align-items: center; justify-content: center; gap: 6px; flex-direction: column">
+    <h1>Upload multi-files</h1>
+    <div>File #1: <input type="file" name="file1"></div>
+    <div>File #2: <input type="file" name="file2"></div>
+    <div>File #3: <input type="file" name="file3"></div>
+    <div>File #4: <input type="file" name="file4"></div>
+    <div>File #5: <input type="file" name="file5"></div>
+
+    <div><button type="submit">Upload</button> <button type="reset">Reset</button></div>
+</form>
+
+<form action="uploadfile2" method="post" enctype="multipart/form-data" style="display: flex; align-items: center; justify-content: center; gap: 6px; flex-direction: column">
+    <h1>File Upload to Database <br>
+        (multipart/form-data)</h1>
+
+    <div>First Name: <input type="text" name="firstName"></div>
+    <div>Last Name: <input type="text" name="lastName"></div>
+    <div>Portrait Photo: <input type="file" name="photo"></div>
+
+    <div><button type="submit">Save</button></div>
+</form>
+</body>
+</html>
