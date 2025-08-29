@@ -6,9 +6,9 @@ import java.sql.SQLException;
 
 public class ConnectDB {
     private static final String JDBC_URL =
-            "jdbc:mariadb://localhost:3306/servlet";
+            "jdbc:mariadb://localhost:3333/22683091";
     private static final String JDBC_USER = "root";
-    private static final String JDBC_PASSWORD = "sapassword";
+    private static final String JDBC_PASSWORD = "1234567890";
     static {
         try {
 // Load driver chỉ một lần duy nhất

@@ -41,6 +41,12 @@
             <artifactId>mssql-jdbc</artifactId>
             <version>11.2.3.jre17</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.mariadb.jdbc/mariadb-java-client -->
+        <dependency>
+            <groupId>org.mariadb.jdbc</groupId>
+            <artifactId>mariadb-java-client</artifactId>
+            <version>3.5.5</version>
+        </dependency>
     </dependencies>
 
     <build>
