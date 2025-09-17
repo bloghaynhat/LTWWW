@@ -3,10 +3,8 @@ package iuh.fit.bai1.daos.impl;
 import iuh.fit.bai1.entities.User;
 
 import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,7 +31,7 @@ public class UserDAOImpl implements iuh.fit.bai1.daos.UserDAO {
                 String name = rs.getNString("name");
                 String email = rs.getString("email");
                 String password = rs.getString("password");
-                String birthday = rs.getString("birthday");
+                LocalDate birthday = rs.getDate("birthday").toLocalDate();
                 String gender = rs.getString("gender");
                 list.add(new User(id, name, email, password, birthday, gender));
             }
@@ -58,7 +56,7 @@ public class UserDAOImpl implements iuh.fit.bai1.daos.UserDAO {
                 String name = rs.getString("name");
                 String email = rs.getString("email");
                 String password = rs.getString("password");
-                String birthday = rs.getString("birthday");
+                LocalDate birthday = rs.getDate("birthday").toLocalDate();
                 String gender = rs.getString("gender");
                 return new User(userId, name, email, password, birthday, gender);
             }
@@ -76,7 +74,7 @@ public class UserDAOImpl implements iuh.fit.bai1.daos.UserDAO {
             ps.setNString(1, user.getName());
             ps.setNString(2, user.getEmail());
             ps.setNString(3, user.getPassword());
-            ps.setNString(4, user.getBirthday());
+            ps.setDate(4, Date.valueOf(user.getBirthday()));
             ps.setNString(5, user.getGender());
 
             int row = ps.executeUpdate();
@@ -97,7 +95,7 @@ public class UserDAOImpl implements iuh.fit.bai1.daos.UserDAO {
             ps.setNString(1, user.getName());
             ps.setNString(2, user.getEmail());
             ps.setNString(3, user.getPassword());
-            ps.setNString(4, user.getBirthday());
+            ps.setDate(4, Date.valueOf(user.getBirthday()));
             ps.setNString(5, user.getGender());
             ps.setInt(6, user.getId());
             int row = ps.executeUpdate();

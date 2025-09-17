@@ -10,10 +10,14 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.*;
 
 import javax.sql.DataSource;
 import java.io.IOException;
+import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 
 @WebServlet(urlPatterns = "/users")
 public class UserController extends HttpServlet {
@@ -57,48 +61,115 @@ public class UserController extends HttpServlet {
     }
 
     //    Post method
-    private void handleUpdateUser(HttpServletRequest req, HttpServletResponse resp) {
+    private void handleUpdateUser(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        try {
+            // 1. Lấy dữ liệu từ form
+            int id = Integer.parseInt(req.getParameter("id"));
+            String name = req.getParameter("name");
+            String email = req.getParameter("email");
+            String password = req.getParameter("password");
+            String birthdayStr = req.getParameter("birthday");
+            String gender = req.getParameter("gender");
+
+            // 2. Convert String -> LocalDate
+            LocalDate birthday = null;
+            if (birthdayStr != null && !birthdayStr.isEmpty()) {
+                birthday = LocalDate.parse(birthdayStr); // format mặc định yyyy-MM-dd
+            }
+
+            // 3. Tạo User object
+            User user = new User();
+            user.setId(id);
+            user.setName(name);
+            user.setEmail(email);
+            user.setPassword(password);
+            user.setBirthday(birthday);
+            user.setGender(gender);
+
+//            Validate User bằng Bean validation
+            ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+            Validator validator = factory.getValidator();
+
+            Set<ConstraintViolation<User>> violations = validator.validate(user);
+
+            if (!violations.isEmpty()) { //Nếu có lỗi validate
+                StringBuilder msg = new StringBuilder();
+                for (ConstraintViolation<User> violation : violations) {
+                    msg.append(violation.getMessage()).append("<br/>");
+                }
+                req.setAttribute("errors", msg.toString());
+                req.setAttribute("user", user); // Giữ lại dữ liệu đã nhập
+                req.getRequestDispatcher("views/user/edit.jsp").forward(req, resp);
+                return;
+
+            }
+
+//            Nếu không có lỗi!
+            // 4. Lưu xuống DB
+            userDAO.updateUser(user);
+
+            // 5. Redirect về list
+            resp.sendRedirect(req.getContextPath() + "/users");
+
+        } catch (Exception e) {
+            // 6. Nếu có lỗi -> forward lại form kèm thông báo
+            req.setAttribute("errors", "Có lỗi khi thêm user: " + e.getMessage());
+            req.getRequestDispatcher("views/user/edit.jsp").forward(req, resp);
+        }
     }
 
-    private void handleAddUser(HttpServletRequest req, HttpServletResponse resp) throws ServletException {
+    private void handleAddUser(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
             // 1. Lấy dữ liệu từ form
             String name = req.getParameter("name");
             String email = req.getParameter("email");
-            String birthday = req.getParameter("birthday");
+            String password = req.getParameter("password");
+            String birthdayStr = req.getParameter("birthday");
             String gender = req.getParameter("gender");
 
-            // 2. Validate đơn giản
-            StringBuilder errors = new StringBuilder();
-            if (name == null || name.isBlank()) {
-                errors.append("Tên không được để trống.<br/>");
-            }
-            if (email == null || email.isBlank()) {
-                errors.append("Email không được để trống.<br/>");
+            // 2. Convert String -> LocalDate
+            LocalDate birthday = null;
+            if (birthdayStr != null && !birthdayStr.isEmpty()) {
+                birthday = LocalDate.parse(birthdayStr); // format mặc định yyyy-MM-dd
             }
 
-            if (!errors.isEmpty()) {
-                // Nếu có lỗi -> trả về form + hiện thông báo
-                req.setAttribute("errors", errors.toString());
-                req.getRequestDispatcher("views/common/error.jsp").forward(req, resp);
-                return;
-            }
-
-            // 3. Tạo đối tượng User
+            // 3. Tạo User object
             User user = new User();
             user.setName(name);
             user.setEmail(email);
-            user.setBirthday(birthday);  // có thể convert sang LocalDate nếu DB dùng kiểu DATE
+            user.setPassword(password);
+            user.setBirthday(birthday);
             user.setGender(gender);
 
-            // 4. Gọi DAO để lưu
+//            Validate User bằng Bean validation
+            ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+            Validator validator = factory.getValidator();
+
+            Set<ConstraintViolation<User>> violations = validator.validate(user);
+
+            if (!violations.isEmpty()) { //Nếu có lỗi validate
+                StringBuilder msg = new StringBuilder();
+                for (ConstraintViolation<User> violation : violations) {
+                    msg.append(violation.getMessage()).append("<br/>");
+                }
+                req.setAttribute("errors", msg.toString());
+                req.setAttribute("user", user); // Giữ lại dữ liệu đã nhập
+                req.getRequestDispatcher("views/user/add.jsp").forward(req, resp);
+                return;
+
+            }
+
+//            Nếu không có lỗi!
+            // 4. Lưu xuống DB
             userDAO.addUser(user);
 
-            // 5. Redirect về danh sách
+            // 5. Redirect về list
             resp.sendRedirect(req.getContextPath() + "/users");
 
         } catch (Exception e) {
-            throw new ServletException("Error while adding user", e);
+            // 6. Nếu có lỗi -> forward lại form kèm thông báo
+            req.setAttribute("errors", "Có lỗi khi thêm user: " + e.getMessage());
+            req.getRequestDispatcher("views/user/add.jsp").forward(req, resp);
         }
     }
 
@@ -119,9 +190,28 @@ public class UserController extends HttpServlet {
     }
 
     private void handleShowEditForm(HttpServletRequest req, HttpServletResponse resp) {
+        try{
+            String id = req.getParameter("id");
+            int userId = Integer.parseInt(id);
+            User user = userDAO.findById(userId);
+            req.setAttribute("user", user);
+            req.getRequestDispatcher("views/user/edit.jsp").forward(req, resp);
+
+        } catch (SQLException | IOException | ServletException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
     private void handleDeleteUser(HttpServletRequest req, HttpServletResponse resp) {
+        try{
+            int id = Integer.parseInt(req.getParameter("id"));
+            userDAO.deleteUser(id);
+            resp.sendRedirect(req.getContextPath() + "/users");
+        } catch (SQLException | IOException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
     private void handleShowRegisterForm(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

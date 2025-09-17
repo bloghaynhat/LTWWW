@@ -1,17 +1,35 @@
 package iuh.fit.bai1.entities;
 
+import jakarta.validation.constraints.*;
+
+import java.time.LocalDate;
+
 public class User {
     private int id;
+
+    @NotBlank(message = "Name must not be blank")
+    @Size(min = 8, max = 50, message = "Name must be between 8 and 50 characters")
     private String name;
+
+    @NotBlank(message = "Email must not be blank")
+    @Email(message = "Email should be valid")
     private String email;
+
+    @NotBlank(message = "Password must not be blank")
+    @Size(min = 6, message = "Password must be at least 6 character")
     private String password;
-    private String birthday;
+
+    @Past(message = "Birthday must be in the past")
+    private LocalDate birthday;
+
+    @NotBlank(message = "Gender is required")
+    @Pattern(regexp = "Male|Female", message = "Gender must be Male or Female")
     private String gender;
 
     public User() {
     }
 
-    public User(String name, String email, String password, String birthday, String gender) {
+    public User(String name, String email, String password, LocalDate birthday, String gender) {
         this.name = name;
         this.email = email;
         this.password = password;
@@ -19,7 +37,7 @@ public class User {
         this.gender = gender;
     }
 
-    public User(int id, String name, String email, String password, String birthday, String gender) {
+    public User(int id, String name, String email, String password, LocalDate birthday, String gender) {
         this.id = id;
         this.name = name;
         this.email = email;
@@ -60,11 +78,11 @@ public class User {
         this.password = password;
     }
 
-    public String getBirthday() {
+    public LocalDate getBirthday() {
         return birthday;
     }
 
-    public void setBirthday(String birthday) {
+    public void setBirthday(LocalDate birthday) {
         this.birthday = birthday;
     }
 
