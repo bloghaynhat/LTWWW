@@ -28,4 +28,33 @@ public class NhaCungCapDAO implements iuh.fit.homephone.daos.NhaCungCap {
             return em.find(DienThoai.class, maDT);
         }
     }
+
+    @Override
+    public List<NhaCungCap> findAll(){
+        try(EntityManager em = JPAUtil.getEntityManager()){
+            String sql = """
+                    SELECT n
+                    FROM NhaCungCap n
+                    """;
+            return em.createQuery(sql, NhaCungCap.class).getResultList();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public NhaCungCap getNCCTheoMaNCC(String maNCC){
+        try(EntityManager em = JPAUtil.getEntityManager()){
+            return em.find(NhaCungCap.class, maNCC);
+        }
+    }
+
+    @Override
+    public void addDienThoai(DienThoai dienThoai){
+        try(EntityManager em = JPAUtil.getEntityManager()){
+            em.getTransaction().begin();
+            em.persist(dienThoai);
+            em.getTransaction().commit();
+        }
+    }
 }

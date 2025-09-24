@@ -1,15 +1,15 @@
 <%--
   Created by IntelliJ IDEA.
   User: Duc
-  Date: 9/23/2025
-  Time: 9:11 PM
+  Date: 9/24/2025
+  Time: 10:03 PM
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <html>
 <head>
-    <title>Danh sách sản phẩm</title>
+    <title>Title</title>
     <style>
         * {
             margin: 0;
@@ -47,28 +47,45 @@
     <a href="">Chức năng quản lí</a>
 </div>
 <main>
-    <c:forEach var="nc" items="${listNCC}">
-        <h2>Nhà cung cấp: ${nc.tenNCC}</h2>
-        <table border="1">
-            <tr>
-                <th>MADT</th>
-                <th>TENDT</th>
-                <th>NAMSANXUAT</th>
-                <th>CAUHINH</th>
-                <th>HINHANH</th>
-            </tr>
-            <c:forEach var="dt" items="${nc.dienThoais}">
-                <tr>
-                    <td>${dt.maDT}</td>
-                    <td>${dt.tenDT}</td>
-                    <td>${dt.namSanXuat}</td>
-                    <td>${dt.cauHinh}</td>
-                    <td><img src="anhdienthoai?maDT=${dt.maDT}" width="100"/></td>
-                </tr>
-            </c:forEach>
+    <form action="dienthoaiform" method="post" enctype="multipart/form-data">
+        <input type="hidden" name="action" value="SAVE">
 
-        </table>
-    </c:forEach>
+        <div>
+            <label>Ma Dien Thoai</label>
+            <input name="maDT">
+        </div>
+
+        <div>
+            <label>Ten Dien Thoai</label>
+            <input name="tenDT">
+        </div>
+
+        <div>
+            <label>Nam San Xuat</label>
+            <input name="namSanXuat">
+        </div>
+
+        <div>
+            <label>Cau hinh</label>
+            <input name="cauHinh">
+        </div>
+
+        <div>
+            <label>Hinh Anh</label>
+            <input name="hinhAnh" type="file">
+        </div>
+
+        <div>
+            <label>Nha Cung Cap</label>
+            <select name="nhaCungCapId">
+                <c:forEach var="ncc" items="${nhaCungCaps}">
+                    <option value="${ncc.maNCC}">${ncc.tenNCC}</option>
+                </c:forEach>
+            </select>
+        </div>
+
+        <button type="submit">Luu</button>
+    </form>
 </main>
 <footer>
     Footer
