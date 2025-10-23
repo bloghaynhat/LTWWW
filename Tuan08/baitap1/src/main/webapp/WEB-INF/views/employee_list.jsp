@@ -6,6 +6,7 @@
     <title>Document</title>
 </head>
 <body>
+<a href="${pageContext.request.contextPath}/show-form">Them moi</a>
 <table border="1">
     <tr>
         <td>Id</td>

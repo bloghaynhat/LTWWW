@@ -4,6 +4,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -16,14 +19,20 @@ public class Employee {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @NotEmpty(message = "firstName khong duoc de trong")
     private String firstName;
 
+    @NotEmpty(message = "lastName khong duoc de trong")
     private String lastName;
 
+    @Email(message = "Email không hợp lệ")
+    @NotEmpty(message = "email khong duoc de trong")
     private String email;
 
+    @NotNull(message = "Ngày sinh không được để trống")
     private LocalDate dob;
 
+    @NotEmpty(message = "phone khong duoc de trong")
     private String phone;
 
     private boolean gender;
